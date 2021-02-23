@@ -6,13 +6,19 @@ pipeline {
         timestamps()  // Timestamper Plugin
         disableConcurrentBuilds()
     }
-    triggers {
-        pollSCM('H/5 * * * *')
+    tools {
+        jdk 'jdk11'
+        maven 'maven36'
     }
     stages {
-        stage('Greeting') {
+        stage('Build') {
             steps {
-                echo 'Hello, World!'
+
+                sh 'java -version'
+
+                sh 'javac -version'
+
+                sh 'mvn --version'
             }
         }
     }
