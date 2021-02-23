@@ -6,13 +6,13 @@ pipeline {
         timestamps()  // Timestamper Plugin
         disableConcurrentBuilds()
     }
-    triggers {
-        pollSCM('H/5 * * * *')
+    parameters {
+        string(name: 'Greetings_to', defaultValue: 'Jenkins Techlab', description: 'Who to greet?')
     }
     stages {
         stage('Greeting') {
             steps {
-                echo 'Hello, World!'
+                echo "Hello, ${params.Greetings_to}!"
             }
         }
     }
