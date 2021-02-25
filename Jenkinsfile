@@ -45,5 +45,36 @@ pipeline {
                 }
             }
         }
+
+        stage('oc apply configuration') {
+            steps {
+                script {
+                    openshift.withCluster(env.OPENSHIFT_CLUSTER) {
+                        openshift.withCredentials(env.OPENSHIFT_CREDENTIALS) {
+                            openshift.withProject(env.OPENSHIFT_PROJECT) {
+                                echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
+                                println openshift.apply('-f', 'config/', '-l', "app=${APP_LABEL}").out
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('build application') {
+            steps {
+                script {
+                    openshift.withCluster(env.OPENSHIFT_CLUSTER) {
+                        openshift.withCredentials(env.OPENSHIFT_CREDENTIALS) {
+                            openshift.withProject(env.OPENSHIFT_PROJECT) {
+                                echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
+                                def bcSelector = openshift.selector("BuildConfig", [ app : env.APP_LABEL ]) // select build
+                                bcSelector.startBuild('--follow').out
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
